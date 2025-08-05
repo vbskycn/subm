@@ -1,6 +1,6 @@
 # 订阅管理系统 (Subscription Management System)
 
-![Version](https://img.shields.io/badge/version-1.1.26-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.29-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node.js](https://img.shields.io/badge/node.js-20+-yellow.svg)
 ![React](https://img.shields.io/badge/react-18-blue.svg)
@@ -26,7 +26,7 @@
 ## 📸 界面预览
 
 ### 仪表板 - 智能费用概览
-![image-20250805171111986](assets/image-20250805171111986.png)
+![image-20250805173020918](assets/image-20250805173020918.png)
 *智能仪表板展示月度/年度支出统计、即将到期的订阅提醒和分类费用分析*
 
 ### 订阅管理 - 完整服务管理
