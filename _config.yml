@@ -1,0 +1,51 @@
+# Jekyll Configuration
+title: 订阅管理系统
+description: 一个现代化的订阅管理系统，帮助用户轻松管理和追踪各种订阅服务的费用和续费情况
+url: "https://vbskycn.github.io/subm"
+baseurl: "/subm"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Include in processing
+include:
+  - _pages
+  - _posts
+  - _drafts
+  - _layouts
+  - _includes
+  - _sass
+  - assets
+  - images
+  - docs 

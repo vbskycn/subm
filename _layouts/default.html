@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title | default: site.title }}</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/toc.css' | relative_url }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ '/assets/favicon.ico' | relative_url }}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ page.title | default: site.title }}">
+    <meta property="og:description" content="{{ page.description | default: site.description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ page.url | absolute_url }}">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.title | default: site.title }}">
+    <meta name="twitter:description" content="{{ page.description | default: site.description }}">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">目录</h2>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="切换侧边栏">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="toc-list" id="tocList">
+                    <!-- 目录将通过JavaScript动态生成 -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content" id="mainContent">
+            <header class="page-header">
+                <h1 class="page-title">{{ page.title | default: site.title }}</h1>
+                {% if page.description %}
+                <p class="page-description">{{ page.description }}</p>
+                {% endif %}
+            </header>
+            
+            <article class="page-content">
+                {{ content }}
+            </article>
+            
+            <footer class="page-footer">
+                <p>&copy; {{ site.time | date: '%Y' }} {{ site.title }}. 基于 MIT 许可证开源。</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ '/assets/js/toc.js' | relative_url }}"></script>
+</body>
+</html> 
