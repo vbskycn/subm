@@ -1,6 +1,6 @@
 # 订阅管理系统 (Subscription Management System)
 
-![Version](https://img.shields.io/badge/version-1.1.29-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.33-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node.js](https://img.shields.io/badge/node.js-20+-yellow.svg)
 ![React](https://img.shields.io/badge/react-18-blue.svg)
@@ -8,11 +8,7 @@
 
 一个现代化的订阅管理系统，帮助用户轻松管理和追踪各种订阅服务的费用和续费情况。
 
-
-
 **项目暂时没有开源，使用完全免费（但是有大量订阅的用户需要许可密钥才可）**
-
-
 
 ## 🔗 快速链接
 
@@ -26,7 +22,7 @@
 ## 📸 界面预览
 
 ### 仪表板 - 智能费用概览
-![image-20250805173020918](assets/image-20250805173020918.png)
+![image-20250806145242038](assets/image-20250806145242038.png)
 *智能仪表板展示月度/年度支出统计、即将到期的订阅提醒和分类费用分析*
 
 ### 订阅管理 - 完整服务管理
@@ -145,11 +141,15 @@
 Subscription-Management/
 ├── src/                    # 前端源码
 │   ├── components/        # React组件
+│   │   ├── ui/           # 基础UI组件
+│   │   ├── subscription/ # 订阅相关组件
+│   │   ├── dashboard/    # 仪表板组件
+│   │   ├── charts/       # 图表组件
+│   │   └── layouts/      # 布局组件
 │   ├── pages/            # 页面组件
 │   ├── store/            # 状态管理
 │   ├── services/         # API服务
 │   ├── utils/            # 工具函数
-│   ├── hooks/            # 自定义Hooks
 │   ├── types/            # TypeScript类型
 │   └── locales/          # 国际化文件
 ├── server/               # 后端源码
@@ -158,8 +158,9 @@ Subscription-Management/
 │   ├── routes/           # 路由层
 │   ├── middleware/       # 中间件
 │   ├── db/              # 数据库相关
+│   ├── config/          # 配置文件
 │   └── utils/           # 工具函数
-├── docs/                # 项目文档
+├── docs/                # 文档目录
 └── docker-compose.yml   # Docker配置
 ```
 
@@ -170,20 +171,21 @@ Subscription-Management/
 - **定时任务服务** - 处理自动续费和汇率更新
 - **支付历史服务** - 管理支付记录和历史追踪
 
-
-
 ## 🚀 快速开始
 
 ### 系统要求
 
-- **Docker**: 20.10.0 或更高版本（可选）
-- **操作系统**: Windows 10+, macOS 10.15+, Linux 
+- **Docker**: 20.10.0 或更高版本（推荐）
+- **Node.js**: 20+ 版本（本地开发）
+- **内存**: 至少 512MB
+- **存储**: 至少 100MB 可用空间
+- **网络**: 需要互联网连接（用于汇率更新和许可证验证）
 
-### 部署
+### 部署方式
 
-#### Docker run 部署（推荐）
+#### 方式一：Docker run 部署（推荐）
 
-数据目录准备
+**数据目录准备**
 
 ```bash
 # 创建数据目录并设置权限
@@ -192,11 +194,15 @@ chown -R 1001:1001 ${PWD}/subscription-manager/data
 chmod 755 ${PWD}/subscription-manager/data
 ```
 
+**停止并删除老的容器**
+
 ```bash
 # 停止并删除老的容器
 docker stop subscription-manager
 docker rm subscription-manager
 ```
+
+**部署应用**
 
 ```bash
 # 部署
@@ -216,22 +222,18 @@ docker run -d \
   zhoujie218/subscription-manager:latest
 ```
 
-
-
 **访问应用**
 
 - 前端界面: http://localhost:5173
+
 
 
 ### 首次使用
 
 1. **设置API密钥**
    
-   - 配置API密钥   `API_KEY`，就是你的管理订阅的密码
-
-   - 配置货币汇率API `TIANAPI_KEY`
-   
-     tianapi.com (可选)
+   - 配置API密钥 `API_KEY`，就是你的管理订阅的密码
+   - 配置货币汇率API `TIANAPI_KEY`（可选，用于自动汇率更新）
    
 2. **配置基础货币**
    - 在设置页面选择基础货币
@@ -245,6 +247,22 @@ docker run -d \
 4. **导入数据（可选）**
    - 支持CSV和JSON格式数据导入
    - 在设置页面使用导入功能
+
+
+
+### 许可证系统配置
+
+#### 版本类型
+- **免费版** - 限制7个订阅，基础功能
+- **专业版** - 无限制订阅，1年有效期
+- **荣誉终生版** - 无限制订阅，永久有效
+
+#### 激活许可证
+1. 访问设置页面
+2. 点击"许可证管理"
+3. 输入许可证密钥
+4. 点击"验证许可证"
+
 
 
 ### 数据备份
@@ -270,19 +288,14 @@ cp backup.sqlite server/database.sqlite
 
 
 ### 数据文件位置
+
 - **Docker 部署**：数据库位于 `DATABASE_PATH` 环境变量指定的路径（默认：`/app/data/database.sqlite`）
-
-  
-
-未来的更新将包含适当的数据库迁移脚本以避免此类问题。
-
-
 
 ## 🔧 配置说明
 
 ### 环境变量
 
-配置以下变量：可选
+配置以下变量（可选）：
 
 ```bash
 # API安全密钥 (必需)
@@ -319,15 +332,63 @@ TZ=Asia/Shanghai
 | `NODE_ENV` | ❌ | production | 运行环境模式 |
 | `TZ` | ❌ | Asia/Shanghai | 系统时区设置 |
 
+### 部署配置
+
+#### Nginx 配置示例
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### 
 
 
-## 📚 文档
+## 📚 文档导航
+
+- **[快速开始指南](./docs/快速开始指南.md)** - 5分钟快速启动项目
+- **[API接口文档](./docs/API接口文档.md)** - 完整的API接口说明
+
+## 
 
 ### 📖 用户文档
-- **[安装部署指南](docs/安装部署指南.md)** - 完整的安装、配置和使用指南
-- 
+
+#### 基本操作
+
+**添加订阅**
+1. 点击"添加订阅"按钮
+2. 填写订阅信息（名称、金额、计费周期等）
+3. 选择分类和支付方式
+4. 点击"保存"
+
+**管理订阅**
+- **编辑**：点击订阅卡片上的编辑按钮
+- **删除**：点击订阅卡片上的删除按钮
+- **状态管理**：可以设置订阅为活跃、试用或已取消
+
+**查看报告**
+- **仪表板**：查看总体费用概览
+- **费用报告**：查看详细的费用分析图表
+- **支付历史**：查看所有支付记录
+
+**数据管理**
+- **导入数据**：支持CSV和JSON格式数据导入
+- **导出数据**：支持CSV和JSON格式数据导出
+- **备份数据**：定期备份数据库文件
+
+
 
 ### API文档
+
 系统提供完整的RESTful API接口，支持以下功能：
 
 - **订阅管理** - 订阅的增删改查操作
@@ -337,9 +398,105 @@ TZ=Asia/Shanghai
 - **设置管理** - 系统配置和用户设置
 - **许可证验证** - 许可证验证和管理接口
 
-详细的API文档请参考：[API接口文档](docs/API接口文档.md)
+#### 认证方式
+
+系统使用API Key进行认证，需要在请求头中包含：
+
+```
+Authorization: Bearer your_api_key_here
+```
+
+#### 响应格式
+
+所有API响应都遵循统一的JSON格式：
+
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "操作成功",
+  "timestamp": "2024-12-19T10:30:00Z"
+}
+```
+
+#### 核心API接口
+
+**健康检查**
+```
+GET /api/health
+```
+
+**订阅管理**
+```
+GET    /api/subscriptions              # 获取订阅列表
+GET    /api/subscriptions/:id          # 获取单个订阅
+POST   /api/protected/subscriptions    # 创建订阅
+PUT    /api/protected/subscriptions/:id # 更新订阅
+DELETE /api/protected/subscriptions/:id # 删除订阅
+POST   /api/protected/subscriptions/bulk # 批量导入
+```
+
+**支付历史**
+```
+GET    /api/payment-history            # 获取支付历史
+POST   /api/protected/payment-history  # 创建支付记录
+PUT    /api/protected/payment-history/:id # 更新支付记录
+DELETE /api/protected/payment-history/:id # 删除支付记录
+```
+
+**费用分析**
+```
+GET /api/analytics/expenses            # 获取费用统计
+GET /api/analytics/upcoming-renewals   # 获取即将到期的订阅
+GET /api/analytics/recently-paid       # 获取最近支付的订阅
+```
+
+**设置管理**
+```
+GET /api/settings                      # 获取设置
+PUT /api/protected/settings            # 更新设置
+```
+
+**汇率管理**
+```
+GET  /api/exchange-rates               # 获取汇率列表
+PUT  /api/protected/exchange-rates     # 更新汇率
+POST /api/protected/exchange-rates/update # 手动更新汇率
+```
+
+**分类和支付方式**
+```
+GET    /api/categories                 # 获取分类列表
+POST   /api/protected/categories       # 创建分类
+PUT    /api/protected/categories/:value # 更新分类
+DELETE /api/protected/categories/:value # 删除分类
+
+GET    /api/payment-methods            # 获取支付方式列表
+POST   /api/protected/payment-methods  # 创建支付方式
+PUT    /api/protected/payment-methods/:value # 更新支付方式
+DELETE /api/protected/payment-methods/:value # 删除支付方式
+```
+
+#### 错误代码
+
+| 错误代码 | 描述 | HTTP状态码 |
+|---------|------|-----------|
+| `INVALID_API_KEY` | API密钥无效 | 401 |
+| `MISSING_API_KEY` | 缺少API密钥 | 401 |
+| `SUBSCRIPTION_NOT_FOUND` | 订阅不存在 | 404 |
+| `CATEGORY_NOT_FOUND` | 分类不存在 | 404 |
+| `PAYMENT_METHOD_NOT_FOUND` | 支付方式不存在 | 404 |
+| `INVALID_BILLING_CYCLE` | 无效的计费周期 | 400 |
+| `INVALID_STATUS` | 无效的状态 | 400 |
+| `INVALID_CURRENCY` | 无效的货币 | 400 |
+| `DUPLICATE_CATEGORY` | 分类已存在 | 409 |
+| `DUPLICATE_PAYMENT_METHOD` | 支付方式已存在 | 409 |
+| `FOREIGN_KEY_CONSTRAINT` | 外键约束违反 | 400 |
+| `VALIDATION_ERROR` | 数据验证错误 | 400 |
+| `INTERNAL_ERROR` | 内部服务器错误 | 500 |
 
 ### 数据库设计
+
 系统使用SQLite数据库，主要包含以下表结构：
 
 - `subscriptions` - 订阅信息表
@@ -348,58 +505,64 @@ TZ=Asia/Shanghai
 - `payment_methods` - 支付方式表
 - `exchange_rates` - 汇率表
 - `settings` - 系统设置表
+- `monthly_category_summary` - 月度分类汇总表
 
+## 🔍 故障排除
 
+### 常见问题
+
+#### 1. 服务无法启动
+```bash
+# 检查端口是否被占用
+lsof -i :3001
+
+# 检查日志
+docker logs subscription-manager
+```
+
+#### 2. 数据库错误
+```bash
+# 重新初始化数据库
+cd server
+npm run db:reset
+```
+
+#### 3. 许可证验证失败
+- 检查网络连接
+- 确认许可证密钥正确
+- 查看许可证服务器状态
+
+#### 4. 汇率更新失败
+- 检查 TIANAPI_KEY 是否正确
+- 确认网络连接正常
+- 查看服务器日志
+
+### 日志查看
+
+#### Docker 日志
+```bash
+# 查看容器日志
+docker logs subscription-manager
+
+# 实时查看日志
+docker logs -f subscription-manager
+```
 
 ## 🤝 贡献指南
-
-#### 前端代码规范
-- 使用 TypeScript 进行类型检查
-- 遵循 React Hooks 最佳实践
-- 使用 ESLint 进行代码检查
-- 组件使用 PascalCase 命名
-- 文件使用 kebab-case 命名
-
-#### 后端代码规范
-- 使用 ES6+ 语法
-- 遵循 RESTful API 设计原则
-- 使用 async/await 处理异步操作
-- 添加适当的错误处理和日志记录
-- 使用 JSDoc 注释
-
-#### 数据库规范
-- 表名使用 snake_case
-
-- 字段名使用 snake_case
-
-- 添加适当的索引和外键约束
-
-- 使用事务确保数据一致性
-
-  
 
 ### 问题反馈
 
 如果您发现任何问题或有改进建议，请：
 
 1. 查看 [Issues](https://github.com/vbskycn/subm) 是否已有相关讨论
+
 2. 创建新的 Issue，详细描述问题或建议
+
 3. 如果是 Bug，请提供复现步骤和环境信息
+
 4. 如果是功能请求，请说明使用场景和预期效果
 
-### 贡献流程
-
-1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'feat: Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-
-
-## 📄 许可证
-
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+   
 
 ## 📝 更新日志
 
@@ -430,12 +593,10 @@ TZ=Asia/Shanghai
 感谢所有为这个项目做出贡献的开发者！
 
 ### 主要贡献者
-- [@vbskycn](https://github.com/vbskycn) - 项目后续创建者和主要维护者
+- [@vbskycn](https://github.com/vbskycn/subm) - 项目后续创建者和主要维护者
 
 ### 贡献者列表
 - [@huhusmang](https://github.com/huhusmang) - 原始项目创建者
-
-
 
 ---
 
