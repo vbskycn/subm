@@ -52,11 +52,12 @@
 #### docker run
 
 ```bash
+# 启动容器，建议host模式，内部默认使用的是3001端口，保持主机这个端口不要占用就行
 docker run -d \
   --name subscription-manager \
   --restart unless-stopped \
   --user 0 \
-  -p 3001:3001 \
+  --network host \
   -e API_KEY="your_secret_api_key_here" \
   -e TIANAPI_KEY="your_tianapi_key_here" \
   -e PORT="3001" \
